@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CausalMe — Design System & Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f8fc;
+  --bg-white: #ffffff;
+  --bg-dark: #0f1729;
+  --node-sleep: #6C5CE7;
+  --node-mood: #FDCB6E;
+  --node-exercise: #00B894;
+  --node-spending: #E17055;
+  --node-heart: #FF6B6B;
+  --node-meetings: #74B9FF;
+  --node-energy: #F8B500;
+  --node-stress: #D63031;
+  --node-productivity: #0984E3;
+  --node-caffeine: #6D4C41;
+  --link-positive: #00B894;
+  --link-negative: #FF6B6B;
+  --text-primary: #1a1d2e;
+  --text-secondary: #5c6178;
+  --text-tertiary: #8f93a8;
+  --border: #e5e8f0;
+  --border-subtle: #edf0f5;
+  --accent: #6C5CE7;
+  --accent-light: #A29BFE;
+  --accent-bg: rgba(108,92,231,0.08);
+  --green: #00B894;
+  --green-bg: rgba(0,184,148,0.08);
+  --red: #FF6B6B;
+  --red-bg: rgba(255,107,107,0.08);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+  --font: 'DM Sans', 'Inter', -apple-system, sans-serif;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: #e0e4ee; color: var(--text-primary); -webkit-font-smoothing: antialiased; }
+
+.screen-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(247,248,252,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; gap: 8px; overflow-x: auto; }
+.screen-nav a { color: var(--text-tertiary); text-decoration: none; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); white-space: nowrap; transition: all 0.2s; }
+.screen-nav a:hover, .screen-nav a.active { color: var(--accent); background: var(--accent-bg); }
+
+.screen { min-height: 100vh; padding: 80px 0 40px; display: flex; flex-direction: column; align-items: center; }
+.screen-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 16px; }
+
+.desktop { width: 1280px; max-width: 95vw; height: 800px; background: var(--bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-lg); }
+.phone { width: 390px; height: 844px; background: var(--bg); border-radius: 44px; border: 2px solid var(--border); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
+.phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 160px; height: 34px; background: #000; border-radius: 0 0 20px 20px; z-index: 10; }
+.phone-content { height: 100%; overflow-y: auto; }
+.phone-content::-webkit-scrollbar { display: none; }
+
+.btn-accent { display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px; background: var(--accent); color: white; font-weight: 600; font-size: 15px; border: none; border-radius: var(--radius-pill); cursor: pointer; box-shadow: 0 4px 16px rgba(108,92,231,0.3); transition: all 0.3s; }
+.btn-accent:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108,92,231,0.4); }
+.btn-outline { display: inline-flex; padding: 12px 28px; background: transparent; color: var(--text-secondary); font-weight: 500; font-size: 14px; border: 1px solid var(--border); border-radius: var(--radius-pill); cursor: pointer; }
+.btn-white { display: inline-flex; padding: 14px 36px; background: white; color: var(--accent); font-weight: 600; font-size: 15px; border: none; border-radius: var(--radius-pill); cursor: pointer; }
+
+/* ===== LANDING ===== */
+.cm-landing { height: 100%; display: flex; flex-direction: column; background: var(--bg-dark); color: white; position: relative; overflow: hidden; }
+.cm-landing-nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; position: relative; z-index: 5; }
+.cm-logo { font-size: 22px; font-weight: 700; }
+.cm-logo span { color: var(--accent-light); }
+.cm-nav-links { display: flex; gap: 28px; align-items: center; }
+.cm-nav-links a { font-size: 14px; color: rgba(255,255,255,0.6); text-decoration: none; }
+
+/* Animated graph background */
+.graph-bg { position: absolute; inset: 0; overflow: hidden; }
+.graph-bg .node { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; animation: bob 6s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.graph-bg .link { position: absolute; height: 2px; opacity: 0.3; transform-origin: left center; }
+
+.cm-hero { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; z-index: 5; }
+.cm-hero .content { max-width: 680px; }
+.cm-hero h1 { font-size: 56px; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+.cm-hero h1 span { background: linear-gradient(135deg, var(--node-sleep), var(--accent-light), var(--node-mood)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.cm-hero p { font-size: 18px; color: rgba(255,255,255,0.65); line-height: 1.65; margin-bottom: 36px; }
+.cm-hero .cta-row { display: flex; gap: 16px; justify-content: center; }
+.cm-hero .trust { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 32px; }
+
+/* Demo section */
+.demo-card { position: relative; z-index: 5; margin: 0 48px 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-xl); padding: 32px; backdrop-filter: blur(10px); }
+.demo-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: rgba(255,255,255,0.9); }
+.demo-card .question { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.demo-card .question .input { flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-pill); color: white; font-size: 14px; }
+.demo-results { display: flex; gap: 12px; flex-wrap: wrap; }
+.demo-result { padding: 10px 16px; background: rgba(255,255,255,0.06); border-radius: var(--radius-md); display: flex; align-items: center; gap: 8px; }
+.demo-result .emoji { font-size: 18px; }
+.demo-result .label { font-size: 13px; color: rgba(255,255,255,0.6); }
+.demo-result .value { font-size: 14px; font-weight: 600; }
+.demo-result .value.up { color: var(--green); }
+.demo-result .value.down { color: var(--red); }
+
+/* ===== DASHBOARD ===== */
+.cm-dash { display: grid; grid-template-columns: 260px 1fr 320px; height: 100%; }
+.cm-sidebar { background: var(--bg-white); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; }
+.cm-sidebar .logo { padding: 0 8px; margin-bottom: 28px; font-size: 20px; font-weight: 700; }
+.cm-sidebar .logo span { color: var(--accent); }
+.cm-sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.cm-sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; }
+.cm-sidebar nav a:hover { background: var(--bg); }
+.cm-sidebar nav a.active { background: var(--accent-bg); color: var(--accent); }
+
+.cm-main { padding: 28px; overflow-y: auto; }
+
+/* Causal Graph */
+.graph-container { background: var(--bg-white); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); height: 400px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+.graph-container .graph-inner { position: relative; width: 100%; height: 100%; }
+
+/* SVG graph nodes */
+.g-node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.2s; }
+.g-node:hover { transform: scale(1.1); }
+.g-node .circle { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.g-node .label { font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+.g-node .delta { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: var(--radius-pill); }
+.g-node .delta.up { background: var(--green-bg); color: var(--green); }
+.g-node .delta.down { background: var(--red-bg); color: var(--red); }
+
+/* Graph connections (SVG) */
+.graph-svg { position: absolute; inset: 0; pointer-events: none; }
+
+/* Right panel */
+.cm-panel { background: var(--bg-white); border-left: 1px solid var(--border); padding: 24px 20px; overflow-y: auto; }
+.cm-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+.today-card { background: var(--bg); border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px; }
+.today-card .row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.today-card .row .emoji { font-size: 18px; width: 24px; text-align: center; }
+.today-card .row .text { font-size: 13px; color: var(--text-secondary); }
+.today-card .row .val { margin-left: auto; font-size: 13px; font-weight: 600; }
+
+.insight-card { padding: 14px; background: var(--accent-bg); border-radius: var(--radius-md); margin-bottom: 12px; }
+.insight-card .text { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+.insight-card strong { color: var(--accent); }
+
+/* What-If panel */
+.whatif-input { display: flex; gap: 8px; margin-bottom: 16px; }
+.whatif-input input { flex: 1; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-pill); font-size: 14px; color: var(--text-primary); outline: none; }
+.whatif-input input:focus { border-color: var(--accent); }
+.whatif-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.whatif-chip { padding: 8px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-pill); font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+.whatif-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Results */
+.sim-results { background: var(--bg-white); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
+.sim-results h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.sim-results .question { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+.sim-result-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+.sim-result-row:last-child { border-bottom: none; }
+.sim-result-row .emoji { font-size: 20px; width: 28px; text-align: center; }
+.sim-result-row .name { flex: 1; font-size: 14px; }
+.sim-result-row .change { font-size: 14px; font-weight: 700; }
+.sim-result-row .change.pos { color: var(--green); }
+.sim-result-row .change.neg { color: var(--red); }
+.sim-confidence { margin-top: 12px; padding: 10px; background: var(--bg); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-tertiary); text-align: center; }
+
+/* Mobile screens */
+.cm-mobile { padding: 52px 20px 100px; height: 100%; }
+.cm-mobile h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.cm-mobile .sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+
+/* Mood check-in */
+.mood-checkin { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; background: var(--bg-white); }
+.mood-checkin h2 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+.mood-faces { display: flex; gap: 16px; margin-bottom: 24px; }
+.mood-face { width: 56px; height: 56px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; }
+.mood-face:hover { transform: scale(1.15); }
+.mood-face.selected { border-color: var(--accent); background: var(--accent-bg); transform: scale(1.15); }
+.mood-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 300px; }
+.mood-tag { padding: 8px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-pill); font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+.mood-tag.selected { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+/* Weekly report */
+.weekly-report { padding: 52px 20px 24px; }
+.weekly-report h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.weekly-report .period { font-size: 13px; color: var(--text-tertiary); margin-bottom: 20px; }
+.metric-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.metric-card { background: var(--bg-white); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-sm); }
+.metric-card .emoji { font-size: 20px; margin-bottom: 6px; }
+.metric-card .val { font-size: 22px; font-weight: 800; }
+.metric-card .label { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+.metric-card .change { font-size: 11px; font-weight: 600; margin-top: 4px; }
+.metric-card .change.up { color: var(--green); }
+.metric-card .change.down { color: var(--red); }
+
+/* Pricing */
+.cm-pricing { padding: 52px 20px 24px; }
+.cm-pricing h2 { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+.cm-pricing .sub { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 28px; }
+.price-card { background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+.price-card.featured { border: 2px solid var(--accent); position: relative; }
+.price-card.featured::before { content: 'BEST VALUE'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); padding: 4px 10px; background: var(--accent); color: white; font-size: 10px; font-weight: 700; border-radius: var(--radius-pill); }
+.price-card .name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.price-card .price { font-size: 36px; font-weight: 800; }
+.price-card .price span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+.price-card .period { font-size: 12px; color: var(--text-tertiary); margin-bottom: 16px; }
+.price-card .features { list-style: none; margin-bottom: 20px; }
+.price-card .features li { padding: 5px 0; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+.price-card .features li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+.price-card .features li.pro { color: var(--accent); font-weight: 500; }
+
+/* Onboarding connect */
+.connect-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.connect-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.connect-card .icon { font-size: 24px; width: 32px; text-align: center; }
+.connect-card .info { flex: 1; }
+.connect-card .info .name { font-size: 14px; font-weight: 600; }
+.connect-card .info .desc { font-size: 12px; color: var(--text-tertiary); }
+.connect-card .status { padding: 6px 14px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; cursor: pointer; }
+.connect-card .status.connect { background: var(--accent-bg); color: var(--accent); }
+.connect-card .status.connected { background: var(--green-bg); color: var(--green); }
+
+/* Bottom nav */
+.bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; padding: 0 20px 20px; }
+.bottom-nav .item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: var(--text-tertiary); }
+.bottom-nav .item.active { color: var(--accent); }
+.bottom-nav .item .icon { font-size: 22px; }
+</style>
+</head>
+<body>
+<nav class="screen-nav">
+  <a href="#landing" class="active">Landing</a>
+  <a href="#onboarding">Onboarding</a>
+  <a href="#dashboard">Dashboard + Graph</a>
+  <a href="#whatif">What-If Simulator</a>
+  <a href="#mood">Mood Check-in</a>
+  <a href="#weekly">Weekly Report</a>
+  <a href="#pricing">Pricing</a>
+</nav>
+
+<!-- ===== LANDING ===== -->
+<section class="screen" id="landing">
+  <div class="screen-label">Landing Page — Desktop</div>
+  <div class="desktop">
+    <div class="cm-landing">
+      <div class="graph-bg">
+        <div class="node" style="width:60px;height:60px;background:rgba(108,92,231,0.3);top:15%;left:12%;animation-delay:0s">😴</div>
+        <div class="node" style="width:48px;height:48px;background:rgba(253,203,110,0.3);top:25%;left:75%;animation-delay:1s">😊</div>
+        <div class="node" style="width:52px;height:52px;background:rgba(0,184,148,0.3);top:60%;left:20%;animation-delay:2s">🏃</div>
+        <div class="node" style="width:44px;height:44px;background:rgba(225,112,85,0.3);top:70%;left:65%;animation-delay:0.5s">💰</div>
+        <div class="node" style="width:40px;height:40px;background:rgba(255,107,107,0.3);top:40%;left:85%;animation-delay:1.5s">❤️</div>
+        <div class="node" style="width:56px;height:56px;background:rgba(116,185,255,0.3);top:50%;left:40%;animation-delay:3s">📅</div>
+        <div class="link" style="width:180px;top:22%;left:16%;background:linear-gradient(90deg,rgba(108,92,231,0.4),rgba(253,203,110,0.4));transform:rotate(5deg)"></div>
+        <div class="link" style="width:150px;top:45%;left:25%;background:linear-gradient(90deg,rgba(0,184,148,0.4),rgba(116,185,255,0.4));transform:rotate(-20deg)"></div>
+        <div class="link" style="width:200px;top:55%;left:42%;background:linear-gradient(90deg,rgba(116,185,255,0.3),rgba(225,112,85,0.3));transform:rotate(15deg)"></div>
+      </div>
+      <nav class="cm-landing-nav">
+        <div class="cm-logo">Causal<span>Me</span></div>
+        <div class="cm-nav-links">
+          <a href="#">How It Works</a>
+          <a href="#">Pricing</a>
+          <a href="#">Privacy</a>
+          <a href="#" style="color:rgba(255,255,255,0.9)">Log in</a>
+          <button class="btn-accent" style="padding:10px 24px;font-size:14px">Start Free</button>
+        </div>
+      </nav>
+      <div class="cm-hero">
+        <div class="content">
+          <h1>See the <span>ripple effects</span> of every decision.</h1>
+          <p>CausalMe connects your health, finances, calendar, and mood to build a living model of your life. Ask any "what if" and see what happens.</p>
+          <div class="cta-row">
+            <button class="btn-accent" style="padding:16px 40px;font-size:16px">Start Free →</button>
+            <button class="btn-white">See How It Works</button>
+          </div>
+          <div class="trust">256-bit encryption · Your data never trains our models · SOC 2 compliant</div>
+        </div>
+      </div>
+      <div class="demo-card">
+        <h3>Try it with sample data</h3>
+        <div class="question">
+          <div class="input">What if I slept 1 hour more?</div>
+          <button class="btn-accent" style="padding:10px 20px;font-size:13px">See Effect →</button>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result"><span class="emoji">😊</span><div><div class="label">Mood</div><div class="value up">+12%</div></div></div>
+          <div class="demo-result"><span class="emoji">⚡</span><div><div class="label">Energy</div><div class="value up">+18%</div></div></div>
+          <div class="demo-result"><span class="emoji">📊</span><div><div class="label">Productivity</div><div class="value up">+9%</div></div></div>
+          <div class="demo-result"><span class="emoji">💰</span><div><div class="label">Spending</div><div class="value down">-3%</div></div></div>
+          <div class="demo-result"><span class="emoji">❤️</span><div><div class="label">Resting HR</div><div class="value down">-4 bpm</div></div></div>
+          <div class="demo-result"><span class="emoji">🏃</span><div><div class="label">Exercise</div><div class="value up">+15%</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ONBOARDING ===== -->
+<section class="screen" id="onboarding">
+  <div class="screen-label">Onboarding — Connect Health</div>
+  <div style="display:flex;gap:32px;flex-wrap:wrap;justify-content:center">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div style="padding:52px 24px 24px;display:flex;flex-direction:column;height:100%">
+          <div style="display:flex;gap:4px;margin-bottom:32px">
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--accent)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--accent)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+          </div>
+          <h2 style="font-size:24px;font-weight:700;margin-bottom:8px">Start with your body.</h2>
+          <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.5">Sleep, heart rate, steps, workouts — your body data is the foundation of your graph.</p>
+          <div class="connect-cards">
+            <div class="connect-card">
+              <div class="icon">❤️</div>
+              <div class="info"><div class="name">Apple Health</div><div class="desc">Sleep, steps, heart rate, workouts, HRV</div></div>
+              <div class="status connected">✓ Connected</div>
+            </div>
+            <div class="connect-card">
+              <div class="icon">💍</div>
+              <div class="info"><div class="name">Oura Ring</div><div class="desc">Sleep, readiness, activity, HRV</div></div>
+              <div class="status connect">Connect</div>
+            </div>
+            <div class="connect-card">
+              <div class="icon">⌚</div>
+              <div class="info"><div class="name">Fitbit</div><div class="desc">Sleep, steps, heart rate, stress</div></div>
+              <div class="status connect">Connect</div>
+            </div>
+            <div class="connect-card">
+              <div class="icon">🔴</div>
+              <div class="info"><div class="name">Whoop</div><div class="desc">Strain, recovery, sleep</div></div>
+              <div class="status connect">Connect</div>
+            </div>
+            <div class="connect-card">
+              <div class="icon">✏️</div>
+              <div class="info"><div class="name">Manual Entry</div><div class="desc">Log sleep, exercise manually</div></div>
+              <div class="status connect">Set Up</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:20px">Connect at least one health source for the best experience.</p>
+          <div style="margin-top:auto">
+            <button class="btn-accent" style="width:100%;justify-content:center;padding:14px">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div style="padding:52px 24px 24px;display:flex;flex-direction:column;height:100%">
+          <div style="display:flex;gap:4px;margin-bottom:32px">
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--accent)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--accent)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--accent)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+          </div>
+          <h2 style="font-size:24px;font-weight:700;margin-bottom:8px">Money & Spending</h2>
+          <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.5">See how spending, income, and financial stress connect to your mood and health.</p>
+          <div class="connect-cards">
+            <div class="connect-card">
+              <div class="icon">🏦</div>
+              <div class="info"><div class="name">Bank Accounts</div><div class="desc">Connect via Plaid — transactions, balances</div></div>
+              <div class="status connect">Connect</div>
+            </div>
+            <div class="connect-card">
+              <div class="icon">📝</div>
+              <div class="info"><div class="name">Manual Budget</div><div class="desc">Monthly income/expense categories</div></div>
+              <div class="status connect">Set Up</div>
+            </div>
+          </div>
+          <div style="padding:16px;background:var(--accent-bg);border-radius:var(--radius-md);margin-top:12px">
+            <p style="font-size:12px;color:var(--text-secondary);line-height:1.5">🔒 CausalMe uses Plaid to securely read your transactions. We never store your banking credentials or individual merchant names.</p>
+          </div>
+          <div style="margin-top:auto">
+            <button class="btn-accent" style="width:100%;justify-content:center;padding:14px">Continue</button>
+            <p style="font-size:13px;color:var(--text-tertiary);text-align:center;margin-top:12px;cursor:pointer">Skip — I'll add this later</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DASHBOARD + GRAPH ===== -->
+<section class="screen" id="dashboard">
+  <div class="screen-label">Dashboard with Causal Graph — Desktop</div>
+  <div class="desktop">
+    <div class="cm-dash">
+      <aside class="cm-sidebar">
+        <div class="logo">Causal<span>Me</span></div>
+        <nav>
+          <a href="#" class="active">🌐 Graph Explorer</a>
+          <a href="#">🔮 What If</a>
+          <a href="#">💡 Insights</a>
+          <a href="#">📅 Timeline</a>
+          <a href="#">📊 Weekly Report</a>
+          <a href="#">⚙️ Settings</a>
+        </nav>
+        <div style="margin-top:auto">
+          <div style="padding:14px;background:var(--accent-bg);border-radius:var(--radius-md)">
+            <div style="font-size:12px;color:var(--text-secondary);line-height:1.4">Your graph: <strong style="color:var(--accent)">12 nodes · 34 connections</strong></div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px">90 days of data</div>
+          </div>
+        </div>
+      </aside>
+      <div class="cm-main">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <h1 style="font-size:22px;font-weight:700">Your Causal Graph</h1>
+            <div style="font-size:13px;color:var(--text-secondary)">Tap nodes to explore connections</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="display:flex;gap:4px">
+              <div style="padding:6px 12px;background:var(--accent-bg);border-radius:var(--radius-pill);font-size:12px;color:var(--accent);font-weight:600">All</div>
+              <div style="padding:6px 12px;background:var(--bg-white);border-radius:var(--radius-pill);font-size:12px;color:var(--text-tertiary);border:1px solid var(--border)">Health</div>
+              <div style="padding:6px 12px;background:var(--bg-white);border-radius:var(--radius-pill);font-size:12px;color:var(--text-tertiary);border:1px solid var(--border)">Finance</div>
+              <div style="padding:6px 12px;background:var(--bg-white);border-radius:var(--radius-pill);font-size:12px;color:var(--text-tertiary);border:1px solid var(--border)">Time</div>
+            </div>
+            <button class="btn-accent" style="padding:10px 20px;font-size:13px">Ask What If ✨</button>
+          </div>
+        </div>
+
+        <div class="graph-container">
+          <svg class="graph-svg" viewBox="0 0 660 400">
+            <!-- Connections -->
+            <line x1="135" y1="130" x2="350" y2="90" stroke="#00B894" stroke-width="3" opacity="0.4"/>
+            <line x1="135" y1="130" x2="240" y2="250" stroke="#00B894" stroke-width="2" opacity="0.3"/>
+            <line x1="135" y1="130" x2="500" y2="180" stroke="#00B894" stroke-width="4" opacity="0.5"/>
+            <line x1="350" y1="90" x2="500" y2="180" stroke="#00B894" stroke-width="2" opacity="0.3"/>
+            <line x1="240" y1="250" x2="350" y2="90" stroke="#00B894" stroke-width="2" opacity="0.25"/>
+            <line x1="500" y1="180" x2="580" y2="300" stroke="#FF6B6B" stroke-width="2" opacity="0.3"/>
+            <line x1="350" y1="90" x2="450" y2="320" stroke="#FF6B6B" stroke-width="3" opacity="0.35"/>
+            <line x1="135" y1="130" x2="100" y2="290" stroke="#00B894" stroke-width="2" opacity="0.3"/>
+            <line x1="350" y1="320" x2="450" y2="320" stroke="#FF6B6B" stroke-width="2" opacity="0.3"/>
+            <line x1="240" y1="250" x2="350" y2="320" stroke="#00B894" stroke-width="2" opacity="0.25"/>
+          </svg>
+          <div class="graph-inner">
+            <div class="g-node" style="left:110px;top:105px"><div class="circle" style="background:rgba(108,92,231,0.15);border:2px solid var(--node-sleep)">😴</div><div class="label">Sleep</div></div>
+            <div class="g-node" style="left:325px;top:65px"><div class="circle" style="background:rgba(253,203,110,0.15);border:2px solid var(--node-mood)">😊</div><div class="label">Mood</div></div>
+            <div class="g-node" style="left:215px;top:225px"><div class="circle" style="background:rgba(0,184,148,0.15);border:2px solid var(--node-exercise)">🏃</div><div class="label">Exercise</div></div>
+            <div class="g-node" style="left:475px;top:155px"><div class="circle" style="background:rgba(9,132,227,0.15);border:2px solid var(--node-productivity)">📊</div><div class="label">Productivity</div></div>
+            <div class="g-node" style="left:75px;top:265px"><div class="circle" style="background:rgba(255,107,107,0.15);border:2px solid var(--node-heart)">❤️</div><div class="label">Heart Rate</div></div>
+            <div class="g-node" style="left:555px;top:275px"><div class="circle" style="background:rgba(225,112,85,0.15);border:2px solid var(--node-spending)">💰</div><div class="label">Spending</div></div>
+            <div class="g-node" style="left:325px;top:295px"><div class="circle" style="background:rgba(214,48,49,0.15);border:2px solid var(--node-stress)">😰</div><div class="label">Stress</div></div>
+            <div class="g-node" style="left:425px;top:295px"><div class="circle" style="background:rgba(116,185,255,0.15);border:2px solid var(--node-meetings)">📅</div><div class="label">Meetings</div></div>
+            <div class="g-node" style="left:175px;top:340px"><div class="circle" style="background:rgba(248,181,0,0.15);border:2px solid var(--node-energy)">⚡</div><div class="label">Energy</div></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="insight-card" style="background:var(--green-bg)">
+            <div class="text">🆕 <strong>New connection discovered:</strong> Exercise → Sleep quality (strong positive, r=0.72). Working out improves your sleep the following night.</div>
+          </div>
+          <div class="insight-card">
+            <div class="text">💡 <strong>Your mood</strong> tends to drop on days with 3+ hours of meetings. Today has 2.5 hours — you're right on the edge.</div>
+          </div>
+        </div>
+      </div>
+      <aside class="cm-panel">
+        <h3>Today's Snapshot</h3>
+        <div class="today-card">
+          <div class="row"><span class="emoji">😊</span><span class="text">Mood</span><span class="val">🙂 Good</span></div>
+          <div class="row"><span class="emoji">😴</span><span class="text">Sleep</span><span class="val">7h 23m</span></div>
+          <div class="row"><span class="emoji">🏃</span><span class="text">Activity</span><span class="val">6,400 steps</span></div>
+          <div class="row"><span class="emoji">📅</span><span class="text">Meetings</span><span class="val">3 (2.5h)</span></div>
+          <div class="row"><span class="emoji">💰</span><span class="text">Spending</span><span class="val">$34</span></div>
+          <div class="row"><span class="emoji">❤️</span><span class="text">Resting HR</span><span class="val">62 bpm</span></div>
+        </div>
+
+        <h3>Daily Insight</h3>
+        <div class="insight-card">
+          <div class="text">You slept 45 min less than usual last night. Historically, this leads to a <strong>15% mood dip</strong> by evening.</div>
+        </div>
+
+        <h3 style="margin-top:16px">Quick What If</h3>
+        <div class="whatif-input">
+          <input type="text" placeholder="What if…">
+        </div>
+        <div class="whatif-chips">
+          <div class="whatif-chip">Sleep 1hr more</div>
+          <div class="whatif-chip">No meetings Fri</div>
+          <div class="whatif-chip">Quit coffee</div>
+        </div>
+
+        <h3 style="margin-top:8px">Graph Health</h3>
+        <div class="today-card">
+          <div class="row"><span class="emoji">🌐</span><span class="text">Nodes</span><span class="val">12</span></div>
+          <div class="row"><span class="emoji">🔗</span><span class="text">Connections</span><span class="val">34</span></div>
+          <div class="row"><span class="emoji">📅</span><span class="text">Data span</span><span class="val">90 days</span></div>
+          <div class="row"><span class="emoji">🎯</span><span class="text">Confidence</span><span class="val">High</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHAT-IF SIMULATOR ===== -->
+<section class="screen" id="whatif">
+  <div class="screen-label">What-If Simulator — Results</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div class="cm-mobile">
+        <h1>What If</h1>
+        <div class="sub">See predicted ripple effects</div>
+
+        <div class="sim-results">
+          <div class="question">What if you slept 1 hour more per night?</div>
+          <h3 style="font-size:14px;color:var(--text-tertiary);margin-bottom:12px">Predicted effects (90 days):</h3>
+          <div class="sim-result-row"><span class="emoji">😊</span><span class="name">Mood</span><span class="change pos">+12%</span></div>
+          <div class="sim-result-row"><span class="emoji">⚡</span><span class="name">Energy</span><span class="change pos">+18%</span></div>
+          <div class="sim-result-row"><span class="emoji">📊</span><span class="name">Productivity</span><span class="change pos">+9%</span></div>
+          <div class="sim-result-row"><span class="emoji">💰</span><span class="name">Spending</span><span class="change neg">-3%</span></div>
+          <div class="sim-result-row"><span class="emoji">❤️</span><span class="name">Resting HR</span><span class="change neg">-4 bpm</span></div>
+          <div class="sim-result-row"><span class="emoji">🏃</span><span class="name">Exercise</span><span class="change pos">+15%</span></div>
+          <div class="sim-result-row"><span class="emoji">😰</span><span class="name">Stress</span><span class="change neg">-8%</span></div>
+          <div class="sim-confidence">Confidence: <strong>Medium-High</strong> (based on 90 days of data)</div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="btn-accent" style="flex:1;justify-content:center;padding:12px;font-size:13px">Save Simulation</button>
+          <button class="btn-outline" style="flex:1;justify-content:center;padding:12px;font-size:13px">Try Another</button>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="item"><span class="icon">🌐</span>Graph</div>
+        <div class="item active"><span class="icon">🔮</span>What If</div>
+        <div class="item"><span class="icon">💡</span>Insights</div>
+        <div class="item"><span class="icon">📅</span>Timeline</div>
+        <div class="item"><span class="icon">⚙️</span>Settings</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MOOD CHECK-IN ===== -->
+<section class="screen" id="mood">
+  <div class="screen-label">Mood Check-in</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div class="mood-checkin">
+        <h2>How are you feeling?</h2>
+        <div class="mood-faces">
+          <div class="mood-face">😫</div>
+          <div class="mood-face">😕</div>
+          <div class="mood-face">😐</div>
+          <div class="mood-face selected">🙂</div>
+          <div class="mood-face">😊</div>
+        </div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">Anything specific?</p>
+        <div class="mood-tags">
+          <div class="mood-tag selected">Work</div>
+          <div class="mood-tag">Relationships</div>
+          <div class="mood-tag">Health</div>
+          <div class="mood-tag">Money</div>
+          <div class="mood-tag">Sleep</div>
+          <div class="mood-tag selected">Exercise</div>
+          <div class="mood-tag">Weather</div>
+          <div class="mood-tag">Nothing specific</div>
+        </div>
+        <button class="btn-accent" style="margin-top:32px;padding:14px 48px">Done</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WEEKLY REPORT ===== -->
+<section class="screen" id="weekly">
+  <div class="screen-label">Weekly Report</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div class="weekly-report">
+        <h1>Your Week in Review</h1>
+        <div class="period">March 8-14, 2026</div>
+
+        <div class="metric-cards">
+          <div class="metric-card"><div class="emoji">😊</div><div class="val">🙂 3.8</div><div class="label">Avg mood (out of 5)</div><div class="change up">↑ 0.2 from last week</div></div>
+          <div class="metric-card"><div class="emoji">😴</div><div class="val">7h 12m</div><div class="label">Avg sleep</div><div class="change" style="color:var(--text-tertiary)">— Stable</div></div>
+          <div class="metric-card"><div class="emoji">🏃</div><div class="val">4</div><div class="label">Exercise sessions</div><div class="change up">↑ 1 from last week</div></div>
+          <div class="metric-card"><div class="emoji">💰</div><div class="val">$612</div><div class="label">Total spending</div><div class="change up">↓ $89 from last week</div></div>
+          <div class="metric-card"><div class="emoji">📅</div><div class="val">14h</div><div class="label">Meetings</div><div class="change down">↑ 2h from last week</div></div>
+          <div class="metric-card"><div class="emoji">❤️</div><div class="val">63</div><div class="label">Avg resting HR</div><div class="change up">↓ 2 from last week</div></div>
+        </div>
+
+        <div class="insight-card" style="margin-bottom:12px">
+          <div class="text">🆕 <strong>New connection:</strong> Exercise → Sleep quality (strong positive). Working out improved your sleep the following night this week.</div>
+        </div>
+        <div class="insight-card" style="margin-bottom:12px">
+          <div class="text">📉 Your spending dropped this week, which coincided with <strong>lower stress and better sleep</strong>. Your graph suggests these are genuinely connected.</div>
+        </div>
+        <div class="insight-card">
+          <div class="text">📈 <strong>Connection strengthened:</strong> Meetings → Stress. More meeting hours correlate with higher stress scores.</div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="btn-accent" style="flex:1;justify-content:center;padding:12px;font-size:13px">Explore Graph</button>
+          <button class="btn-outline" style="flex:1;justify-content:center;padding:12px;font-size:13px">Run Simulation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="screen" id="pricing">
+  <div class="screen-label">Pricing</div>
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div class="cm-pricing">
+        <h2>Your life, decoded.</h2>
+        <div class="sub">Connect your data. See the patterns. Ask "what if?"</div>
+
+        <div class="price-card">
+          <div class="name">Free</div>
+          <div class="price">$0<span>/forever</span></div>
+          <div class="period">Get started immediately</div>
+          <ul class="features">
+            <li>3 data sources</li>
+            <li>Basic causal graph</li>
+            <li>3 What-If simulations/month</li>
+            <li>Daily mood tracking</li>
+            <li>Weekly insights report</li>
+          </ul>
+          <button class="btn-outline" style="width:100%;justify-content:center;padding:12px">Get Started</button>
+        </div>
+
+        <div class="price-card featured">
+          <div class="name">Pro</div>
+          <div class="price">$14<span>/month</span></div>
+          <div class="period">7-day free trial</div>
+          <ul class="features">
+            <li>Unlimited data sources</li>
+            <li>Full causal graph with confidence</li>
+            <li>Unlimited What-If simulations</li>
+            <li class="pro">Multi-variable simulations</li>
+            <li class="pro">Historical backtesting</li>
+            <li class="pro">Extended timeframes (1yr)</li>
+            <li class="pro">Shareable insights</li>
+            <li class="pro">API access</li>
+          </ul>
+          <button class="btn-accent" style="width:100%;justify-content:center;padding:12px">Start Free Trial</button>
+        </div>
+
+        <p style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-top:12px">Cancel anytime · Your data stays encrypted · SOC 2 compliant</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div style="height:80px"></div>
+</body>
+</html>
