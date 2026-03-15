@@ -33,7 +33,7 @@ export default function WhatIfPage() {
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-4 md:p-6 pt-14 md:pt-6 max-w-4xl">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">What If Simulator</h1>
       <p className="text-sm text-gray-500 mb-8">
         Change a variable and watch ripple effects cascade through your life graph

@@ -23,13 +23,13 @@ export default function DashboardPage() {
     : [];
 
   return (
-    <div className="p-6 h-screen flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Your Causal Graph</h1>
-          <p className="text-sm text-gray-500">Click any node to explore its causes and effects</p>
+    <div className="p-4 md:p-6 h-screen flex flex-col pt-14 md:pt-6">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
+        <div className="min-w-0">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">Your Causal Graph</h1>
+          <p className="text-xs md:text-sm text-gray-500">Click any node to explore its causes and effects</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-2 text-xs text-gray-400">
             <div className="w-3 h-0.5 bg-indigo-400 rounded" /> positive
             <div className="w-3 h-0.5 bg-red-400 rounded ml-2" /> negative
@@ -37,12 +37,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex gap-6 min-h-0">
+      <div className="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 min-h-0">
         {/* Graph */}
-        <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden relative">
+        <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden relative min-h-[300px]">
           <CausalGraph
-            width={900}
-            height={600}
             onNodeClick={setSelectedNode}
             highlightNode={selectedNode?.id || null}
             interactive
@@ -53,10 +51,10 @@ export default function DashboardPage() {
         <AnimatePresence>
           {selectedNode && (
             <motion.div
-              initial={{ opacity: 0, x: 20, width: 0 }}
-              animate={{ opacity: 1, x: 0, width: 320 }}
-              exit={{ opacity: 0, x: 20, width: 0 }}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden shrink-0"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="w-full md:w-80 bg-white rounded-xl border border-gray-200 overflow-hidden shrink-0 max-h-[50vh] md:max-h-none overflow-y-auto"
             >
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">

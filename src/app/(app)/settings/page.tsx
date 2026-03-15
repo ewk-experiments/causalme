@@ -23,7 +23,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="p-4 md:p-6 pt-14 md:pt-6 max-w-3xl">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
       <p className="text-sm text-gray-500 mb-8">Manage your data, connections, and privacy</p>
 

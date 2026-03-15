@@ -25,7 +25,7 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 pt-14 md:pt-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Timeline</h1>
       <p className="text-sm text-gray-500 mb-6">
         Historical view of your life variables with detected causal events

@@ -45,7 +45,7 @@ const PLANS = [
 
 export default function PricingPage() {
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-4 md:p-6 pt-14 md:pt-6 max-w-4xl mx-auto">
       <div className="text-center mb-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-3">Simple, transparent pricing</h1>
         <p className="text-gray-500">Start free, upgrade when you want the full picture</p>

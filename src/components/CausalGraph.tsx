@@ -20,19 +20,40 @@ interface SimNode extends CausalNode {
   pulsePhase: number;
 }
 
-export default function CausalGraph({ width = 800, height = 600, onNodeClick, highlightNode, interactive = true }: Props) {
+export default function CausalGraph({ width: propWidth, height: propHeight, onNodeClick, highlightNode, interactive = true }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const nodesRef = useRef<SimNode[]>([]);
   const hoveredRef = useRef<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const animRef = useRef<number>(0);
   const timeRef = useRef(0);
+  const [size, setSize] = useState({ width: propWidth || 800, height: propHeight || 600 });
+
+  // Observe container size
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        const w = Math.floor(entry.contentRect.width);
+        const h = Math.floor(entry.contentRect.height);
+        if (w > 0 && h > 0) setSize({ width: w, height: h });
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const { width, height } = size;
 
   // Initialize nodes in a circle
   useEffect(() => {
     const cx = width / 2;
     const cy = height / 2;
     const r = Math.min(width, height) * 0.32;
+    const nodeRadius = Math.max(24, Math.min(36, width * 0.04));
     nodesRef.current = NODES.map((n, i) => {
       const angle = (i / NODES.length) * Math.PI * 2 - Math.PI / 2;
       return {
@@ -41,7 +62,7 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
         y: cy + Math.sin(angle) * r,
         vx: 0,
         vy: 0,
-        radius: 36,
+        radius: nodeRadius,
         pulsePhase: Math.random() * Math.PI * 2,
       };
     });
@@ -82,7 +103,6 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
       const alpha = isHighlighted ? 0.8 : (highlightNode || hoveredRef.current) ? 0.08 : 0.2;
       const lineWidth = isHighlighted ? 2.5 : 1;
 
-      // Gradient edge
       const grad = ctx.createLinearGradient(src.x, src.y, tgt.x, tgt.y);
       const edgeColor = edge.weight > 0 ? "99, 102, 241" : "239, 68, 68";
       grad.addColorStop(0, `rgba(${edgeColor}, ${alpha})`);
@@ -92,7 +112,6 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
       ctx.strokeStyle = grad;
       ctx.lineWidth = lineWidth;
 
-      // Curved edges
       const mx = (src.x + tgt.x) / 2;
       const my = (src.y + tgt.y) / 2;
       const dx = tgt.x - src.x;
@@ -104,7 +123,6 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
       ctx.quadraticCurveTo(mx + nx, my + ny, tgt.x, tgt.y);
       ctx.stroke();
 
-      // Animated particle along edge
       if (isHighlighted) {
         const pt = ((t * 0.5 + Math.abs(edge.weight)) % 1);
         const tt = pt;
@@ -116,7 +134,6 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
         ctx.fill();
       }
 
-      // Arrow
       if (isHighlighted) {
         const at = 0.85;
         const ax = (1 - at) * (1 - at) * src.x + 2 * (1 - at) * at * (mx + nx) + at * at * tgt.x;
@@ -151,7 +168,6 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
       const r = node.radius * (isActive ? 1.15 : 1) * pulse;
       const alpha = isDimmed ? 0.15 : 1;
 
-      // Glow
       if (isActive) {
         const glow = ctx.createRadialGradient(node.x, node.y, r, node.x, node.y, r * 2.5);
         glow.addColorStop(0, node.color + "40");
@@ -162,7 +178,6 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
         ctx.fill();
       }
 
-      // Node circle
       ctx.beginPath();
       ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
       ctx.fillStyle = alpha < 1 ? node.color + "25" : node.color + "15";
@@ -171,14 +186,12 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
       ctx.lineWidth = isActive ? 3 : 2;
       ctx.stroke();
 
-      // Icon
       ctx.font = `${r * 0.6}px sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.globalAlpha = alpha;
       ctx.fillText(node.icon, node.x, node.y - 2);
 
-      // Label
       ctx.font = `600 11px var(--font-sans), system-ui, sans-serif`;
       ctx.fillStyle = alpha < 1 ? "#94a3b8" : "#334155";
       ctx.fillText(node.label, node.x, node.y + r + 14);
@@ -194,17 +207,23 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
     return () => cancelAnimationFrame(animRef.current);
   }, [draw]);
 
+  const getCanvasPos = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    const clientX = 'touches' in e ? e.touches[0]?.clientX ?? 0 : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }, []);
+
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!interactive) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+    const pos = getCanvasPos(e);
+    if (!pos) return;
 
     let found: string | null = null;
     for (const node of nodesRef.current) {
-      const dx = mx - node.x;
-      const dy = my - node.y;
+      const dx = pos.x - node.x;
+      const dy = pos.y - node.y;
       if (Math.sqrt(dx * dx + dy * dy) < node.radius * 1.2) {
         found = node.id;
         break;
@@ -212,19 +231,34 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
     }
     hoveredRef.current = found;
     setHovered(found);
-  }, [interactive]);
+  }, [interactive, getCanvasPos]);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!interactive || !onNodeClick) return;
+    const pos = getCanvasPos(e);
+    if (!pos) return;
+
+    for (const node of nodesRef.current) {
+      const dx = pos.x - node.x;
+      const dy = pos.y - node.y;
+      if (Math.sqrt(dx * dx + dy * dy) < node.radius * 1.2) {
+        onNodeClick(node);
+        break;
+      }
+    }
+  }, [interactive, onNodeClick, getCanvasPos]);
+
+  const handleTouch = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!interactive || !onNodeClick) return;
     const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+    if (!rect || !e.changedTouches[0]) return;
+    const mx = e.changedTouches[0].clientX - rect.left;
+    const my = e.changedTouches[0].clientY - rect.top;
 
     for (const node of nodesRef.current) {
       const dx = mx - node.x;
       const dy = my - node.y;
-      if (Math.sqrt(dx * dx + dy * dy) < node.radius * 1.2) {
+      if (Math.sqrt(dx * dx + dy * dy) < node.radius * 1.5) {
         onNodeClick(node);
         break;
       }
@@ -232,13 +266,16 @@ export default function CausalGraph({ width = 800, height = 600, onNodeClick, hi
   }, [interactive, onNodeClick]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => { hoveredRef.current = null; setHovered(null); }}
-      onClick={handleClick}
-      style={{ cursor: hovered ? "pointer" : "default" }}
-      className="w-full h-full"
-    />
+    <div ref={containerRef} className="w-full h-full">
+      <canvas
+        ref={canvasRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => { hoveredRef.current = null; setHovered(null); }}
+        onClick={handleClick}
+        onTouchEnd={handleTouch}
+        style={{ cursor: hovered ? "pointer" : "default", touchAction: "none" }}
+        className="w-full h-full"
+      />
+    </div>
   );
 }
